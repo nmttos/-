@@ -51,6 +51,16 @@
     text-align: center; background: #fdfaf4; color: #4a3520;
   }
   input[type="text"]:focus { border-color: #8b6c42; }
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .choice-btn {
+    padding: 14px 8px; font-size: 1.3rem; font-family: inherit;
+    border: 2px solid #c8a87a; border-radius: 6px; cursor: pointer;
+    background: #fdfaf4; color: #4a3520; transition: background 0.2s;
+  }
+  .choice-btn:hover { background: #f0e0c0; }
+  .choice-btn.correct-choice { background: #e8f5e9; border-color: #2e7d32; color: #2e7d32; }
+  .choice-btn.wrong-choice  { background: #fdecea; border-color: #c62828; color: #c62828; }
+  .choice-btn.reveal-choice { background: #e8f5e9; border-color: #2e7d32; color: #2e7d32; }
   button {
     padding: 10px 20px; font-size: 1rem; font-family: inherit;
     border: none; border-radius: 6px; cursor: pointer; transition: background 0.2s;
@@ -75,12 +85,19 @@
   .hidden { display: none; }
   .title-big { font-size: 1.8rem; color: #4a3520; letter-spacing: 0.2em; margin-bottom: 12px; }
   #screen-start p { color: #7a5c30; font-size: 0.95rem; margin-bottom: 8px; line-height: 1.7; }
-  .count-select { margin: 16px 0; }
+  .count-select { margin: 12px 0; }
   .count-select label { font-size: 0.9rem; color: #7a5c30; display: block; margin-bottom: 6px; }
   .count-select select {
     padding: 6px 12px; font-size: 1rem; font-family: inherit;
     border: 2px solid #c8a87a; border-radius: 6px; background: #fdfaf4; color: #4a3520;
   }
+  .mode-select { margin: 12px 0; display: flex; gap: 10px; }
+  .mode-btn {
+    flex: 1; padding: 12px; font-size: 0.95rem; font-family: inherit;
+    border: 2px solid #c8a87a; border-radius: 6px; cursor: pointer;
+    background: #fdfaf4; color: #4a3520; transition: all 0.2s;
+  }
+  .mode-btn.selected { background: #8b6c42; color: #fff; border-color: #8b6c42; }
 </style>
 </head>
 <body>
@@ -98,6 +115,13 @@
         <option value="all">全問（68問）</option>
       </select>
     </div>
+    <div class="count-select">
+      <label>モードを選んでください</label>
+      <div class="mode-select">
+        <button class="mode-btn selected" id="mode-write" onclick="selectMode('write')">✏️ 記述式</button>
+        <button class="mode-btn" id="mode-choice" onclick="selectMode('choice')">🔲 4択</button>
+      </div>
+    </div>
     <button class="btn-start" onclick="startQuiz()">はじめる</button>
   </div>
 
@@ -110,9 +134,14 @@
       <div class="img-error" id="img-error">画像を読み込めませんでした</div>
     </div>
     <div class="question-text">この異体字は何という漢字でしょう？</div>
-    <div class="input-row">
-      <input type="text" id="answer-input" maxlength="3" placeholder="漢字1文字">
-      <button class="btn-answer" id="btn-answer">答える</button>
+    <div id="write-area">
+      <div class="input-row">
+        <input type="text" id="answer-input" maxlength="3" placeholder="漢字1文字">
+        <button class="btn-answer" id="btn-answer">答える</button>
+      </div>
+    </div>
+    <div id="choice-area" class="hidden">
+      <div class="choices" id="choices"></div>
     </div>
     <div id="feedback" class="hidden"></div>
     <div id="answer-reveal" class="answer-reveal hidden"></div>
@@ -148,31 +177,34 @@ const FILES = [
   "頭②.png","顛.png","鶯.png","鶴.png"
 ];
 
-function getAnswer(f) {
-  return f.replace(".png","").replace(/[①②③④⑤]/,"");
-}
+function getAnswer(f) { return f.replace(".png","").replace(/[①②③④⑤]/,""); }
 
 const ALL_QUESTIONS = FILES.map(f => ({
   img: BASE_URL + encodeURIComponent(f),
   answer: getAnswer(f)
 }));
 
-let questions=[], current=0, score=0, answered=false, mistakes=[];
+// 全ユニーク答えリスト（4択用）
+const ALL_ANSWERS = [...new Set(ALL_QUESTIONS.map(q=>q.answer))];
 
-// ボタンとinputのイベントをまとめて設定
+let questions=[], current=0, score=0, answered=false, mistakes=[], mode='write';
+
+function selectMode(m) {
+  mode=m;
+  document.getElementById('mode-write').classList.toggle('selected', m==='write');
+  document.getElementById('mode-choice').classList.toggle('selected', m==='choice');
+}
+
 const inputEl = document.getElementById('answer-input');
 const btnAnswer = document.getElementById('btn-answer');
 const btnNext = document.getElementById('btn-next');
 
-btnAnswer.addEventListener('click', checkAnswer);
+btnAnswer.addEventListener('click', checkAnswerWrite);
 btnNext.addEventListener('click', nextQuestion);
 inputEl.addEventListener('keydown', function(e) {
   if (e.key !== 'Enter') return;
-  if (!answered) {
-    checkAnswer();
-  } else {
-    nextQuestion();
-  }
+  if (!answered) checkAnswerWrite();
+  else nextQuestion();
 });
 
 function shuffle(arr) {
@@ -196,6 +228,9 @@ function startQuiz() {
   questions=sel==='all'?shuffled:shuffled.slice(0,parseInt(sel));
   current=0; score=0; mistakes=[];
   showScreen('screen-quiz');
+  // モード切替
+  document.getElementById('write-area').classList.toggle('hidden', mode==='choice');
+  document.getElementById('choice-area').classList.toggle('hidden', mode==='write');
   loadQuestion();
 }
 
@@ -209,12 +244,72 @@ function loadQuestion() {
   img.style.display='block';
   document.getElementById('img-error').style.display='none';
   img.src=q.img;
-  inputEl.value='';
-  inputEl.readOnly=false;
-  inputEl.focus();
   document.getElementById('feedback').classList.add('hidden');
   document.getElementById('answer-reveal').classList.add('hidden');
   btnNext.classList.add('hidden');
+  if(mode==='write') {
+    inputEl.value='';
+    inputEl.readOnly=false;
+    inputEl.focus();
+  } else {
+    buildChoices(q);
+  }
+}
+
+function buildChoices(q) {
+  const others = shuffle(ALL_ANSWERS.filter(a=>a!==q.answer)).slice(0,3);
+  const opts = shuffle([q.answer, ...others]);
+  const div = document.getElementById('choices');
+  div.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>checkAnswerChoice(opt, q.answer, btn);
+    div.appendChild(btn);
+  });
+}
+
+function checkAnswerWrite() {
+  const input=inputEl.value.trim();
+  if(!input)return;
+  answered=true;
+  inputEl.readOnly=true;
+  const q=questions[current];
+  const correct=input===q.answer;
+  showFeedback(correct, q.answer);
+}
+
+function checkAnswerChoice(selected, correct, btn) {
+  if(answered)return;
+  answered=true;
+  const isCorrect=selected===correct;
+  // 選択肢のスタイル更新
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===correct) b.classList.add('reveal-choice');
+  });
+  if(!isCorrect) btn.classList.add('wrong-choice');
+  else btn.classList.add('correct-choice');
+  showFeedback(isCorrect, correct);
+}
+
+function showFeedback(correct, answer) {
+  const q=questions[current];
+  if(correct) score++;
+  else if(!mistakes.some(m=>m.img===q.img)) mistakes.push(q);
+  const fb=document.getElementById('feedback');
+  fb.textContent=correct?'⭕ 正解！':'❌ 不正解';
+  fb.className='feedback '+(correct?'correct':'wrong');
+  fb.classList.remove('hidden');
+  const reveal=document.getElementById('answer-reveal');
+  reveal.innerHTML=correct?'よくできました！':`正解は <span>${answer}</span> でした`;
+  reveal.classList.remove('hidden');
+  document.getElementById('score').textContent=score;
+  document.getElementById('total-done').textContent=current+1;
+  btnNext.textContent=current+1>=questions.length?'結果を見る':'次の問題へ →';
+  btnNext.classList.remove('hidden');
+  if(mode==='write') inputEl.focus();
 }
 
 function showImgError() {
@@ -222,31 +317,9 @@ function showImgError() {
   document.getElementById('img-error').style.display='block';
 }
 
-function checkAnswer() {
-  const input=inputEl.value.trim();
-  if(!input)return;
-  answered=true;
-  inputEl.readOnly=true;
-  const q=questions[current];
-  const correct=input===q.answer;
-  if(correct)score++;
-  else mistakes.push(q);
-  const fb=document.getElementById('feedback');
-  fb.textContent=correct?'⭕ 正解！':'❌ 不正解';
-  fb.className='feedback '+(correct?'correct':'wrong');
-  fb.classList.remove('hidden');
-  const reveal=document.getElementById('answer-reveal');
-  reveal.innerHTML=correct?'よくできました！':`正解は <span>${q.answer}</span> でした`;
-  reveal.classList.remove('hidden');
-  document.getElementById('score').textContent=score;
-  document.getElementById('total-done').textContent=current+1;
-  btnNext.textContent=current+1>=questions.length?'結果を見る':'次の問題へ →';
-  btnNext.classList.remove('hidden');
-}
-
 function nextQuestion() {
   current++;
-  if(current>=questions.length)showResult();
+  if(current>=questions.length) showResult();
   else loadQuestion();
 }
 
@@ -268,8 +341,6 @@ function showResult() {
 function startReview() {
   questions=shuffle(mistakes);
   current=0; score=0; mistakes=[];
-  document.getElementById('result-score').textContent='';
-  document.getElementById('result-comment').textContent='復習コース';
   showScreen('screen-quiz');
   loadQuestion();
 }

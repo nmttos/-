@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>くずし字クイズ②</title>
+<title>くずし字クイズ③</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -103,15 +103,15 @@
 <body>
 <div class="container">
   <div id="screen-start">
-    <div class="title-big">くずし字クイズ②</div>
-    <p>ひらがなの字母になった<br>くずし字を読む練習をしましょう。</p>
+    <div class="title-big">くずし字クイズ③</div>
+    <p>方丈記に使われた<br>くずし字を読む練習をしましょう。</p>
     <div class="count-select">
       <label>出題数を選んでください</label>
       <select id="q-count">
         <option value="5">5問</option>
         <option value="10" selected>10問</option>
         <option value="20">20問</option>
-        <option value="all">全問（63問）</option>
+        <option value="all">全問（31問）</option>
       </select>
     </div>
     <div class="count-select">
@@ -125,14 +125,14 @@
   </div>
 
   <div id="screen-quiz" class="hidden">
-    <h1>くずし字クイズ②</h1>
+    <h1>くずし字クイズ③</h1>
     <div class="score-bar">正解数: <span id="score">0</span> / <span id="total-done">0</span></div>
     <div class="progress" id="progress"></div>
     <div class="image-wrap">
       <img id="quiz-img" src="" alt="くずし字画像" onerror="showImgError()">
       <div class="img-error" id="img-error">画像を読み込めませんでした</div>
     </div>
-    <div class="question-text">この字母は何という漢字でしょう？</div>
+    <div class="question-text">このくずし字は何という漢字でしょう？</div>
     <div id="write-area">
       <div class="input-row">
         <input type="text" id="answer-input" maxlength="3" placeholder="漢字1文字">
@@ -161,17 +161,13 @@
   </div>
 </div>
 <script>
-const BASE_URL = "https://raw.githubusercontent.com/nmttos/-/main/%E3%81%B2%E3%82%89%E3%81%8C%E3%81%AA%E5%AD%97%E6%AF%8D%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/";
+const BASE_URL = "https://raw.githubusercontent.com/nmttos/-/main/%E6%96%B9%E4%B8%88%E8%A8%98%E3%83%BB%E6%BC%A2%E5%AD%97/";
 
 const FILES = [
-  "事.png","事②.png","伝.png","南.png","名.png","喜.png","声①.png","声②.png",
-  "夜.png","奉.png","女.png","宝.png","家.png","寿.png","帝.png","年①.png",
-  "年②.png","得.png","悪.png","意.png","意②.png","愛.png","愛②.png","憂.png",
-  "我.png","所.png","故.png","散.png","数①.png","数②.png","新.png","於.png",
-  "春①.png","春②.png","有①.png","有②.png","本.png","東.png","歟.png","求.png",
-  "流.png","瀬.png","為.png","異.png","真.png","緒.png","縁.png","落.png",
-  "葉.png","衛①.png","衛②.png","賀.png","越.png","遊.png","遠.png","都.png",
-  "間.png","難①.png","難②.png","雲.png","露.png","馬.png","馬②.png"
+  "也.png","事.png","云・言.png","侍.png","候.png","冬.png","卿.png","名.png",
+  "哥・歌.png","夏.png","夜.png","宮.png","家.png","将.png","御.png","御①.png",
+  "心.png","思.png","思③.png","所.png","明.png","殿.png","物.png","物③.png",
+  "納.png","給.png","給②.png","色.png","身.png","長.png","雲.png"
 ];
 
 function getAnswer(f) { return f.replace(".png","").replace(/[①②③④⑤]/,""); }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>くずし字クイズ②</title>
+<title>異体字クイズ</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -102,16 +102,17 @@
 </head>
 <body>
 <div class="container">
+
   <div id="screen-start">
-    <div class="title-big">くずし字クイズ②</div>
-    <p>ひらがなの字母になった<br>くずし字を読む練習をしましょう。</p>
+    <div class="title-big">異体字クイズ</div>
+    <p>古文書などで使われた<br>異体字を読む練習をしましょう。</p>
     <div class="count-select">
       <label>出題数を選んでください</label>
       <select id="q-count">
         <option value="5">5問</option>
         <option value="10" selected>10問</option>
         <option value="20">20問</option>
-        <option value="all">全問（63問）</option>
+        <option value="all">全問（68問）</option>
       </select>
     </div>
     <div class="count-select">
@@ -125,14 +126,14 @@
   </div>
 
   <div id="screen-quiz" class="hidden">
-    <h1>くずし字クイズ②</h1>
+    <h1>異体字クイズ</h1>
     <div class="score-bar">正解数: <span id="score">0</span> / <span id="total-done">0</span></div>
     <div class="progress" id="progress"></div>
     <div class="image-wrap">
-      <img id="quiz-img" src="" alt="くずし字画像" onerror="showImgError()">
+      <img id="quiz-img" src="" alt="異体字画像" onerror="showImgError()">
       <div class="img-error" id="img-error">画像を読み込めませんでした</div>
     </div>
-    <div class="question-text">この字母は何という漢字でしょう？</div>
+    <div class="question-text">この異体字は何という漢字でしょう？</div>
     <div id="write-area">
       <div class="input-row">
         <input type="text" id="answer-input" maxlength="3" placeholder="漢字1文字">
@@ -159,19 +160,21 @@
     <button id="btn-review" class="btn-next" style="width:100%;margin-top:8px;" onclick="startReview()">間違えた問題を復習する</button>
     <button class="btn-outline" onclick="showScreen('screen-start')">出題数を変える</button>
   </div>
+
 </div>
 <script>
-const BASE_URL = "https://raw.githubusercontent.com/nmttos/-/main/%E3%81%B2%E3%82%89%E3%81%8C%E3%81%AA%E5%AD%97%E6%AF%8D%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/";
+const BASE_URL = "https://raw.githubusercontent.com/nmttos/-/main/%E7%95%B0%E4%BD%93%E5%AD%97%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/";
 
 const FILES = [
-  "事.png","事②.png","伝.png","南.png","名.png","喜.png","声①.png","声②.png",
-  "夜.png","奉.png","女.png","宝.png","家.png","寿.png","帝.png","年①.png",
-  "年②.png","得.png","悪.png","意.png","意②.png","愛.png","愛②.png","憂.png",
-  "我.png","所.png","故.png","散.png","数①.png","数②.png","新.png","於.png",
-  "春①.png","春②.png","有①.png","有②.png","本.png","東.png","歟.png","求.png",
-  "流.png","瀬.png","為.png","異.png","真.png","緒.png","縁.png","落.png",
-  "葉.png","衛①.png","衛②.png","賀.png","越.png","遊.png","遠.png","都.png",
-  "間.png","難①.png","難②.png","雲.png","露.png","馬.png","馬②.png"
+  "也.png","事.png","事①.png","互①.png","互②.png","今.png","光.png","凡.png",
+  "出.png","出①.png","出②.png","出③.png","印.png","取.png","品.png","喜.png",
+  "四.png","因.png","声.png","夏.png","州.png","巻.png","帰①.png","帰②.png",
+  "度.png","従.png","承.png","時①.png","書.png","森.png","歟.png","永.png",
+  "海.png","災.png","炎.png","無.png","爾.png","畢.png","畢②.png","異.png",
+  "秋.png","等.png","算.png","紙.png","給.png","美.png","義.png","聞.png",
+  "臣.png","興①.png","興②.png","色①.png","色②.png","観.png","計.png","貌.png",
+  "逃.png","還.png","部.png","難.png","霊①.png","霊②.png","霊③.png","頭①.png",
+  "頭②.png","顛.png","鶯.png","鶴.png"
 ];
 
 function getAnswer(f) { return f.replace(".png","").replace(/[①②③④⑤]/,""); }
@@ -181,6 +184,7 @@ const ALL_QUESTIONS = FILES.map(f => ({
   answer: getAnswer(f)
 }));
 
+// 全ユニーク答えリスト（4択用）
 const ALL_ANSWERS = [...new Set(ALL_QUESTIONS.map(q=>q.answer))];
 
 let questions=[], current=0, score=0, answered=false, mistakes=[], mode='write';
@@ -224,6 +228,7 @@ function startQuiz() {
   questions=sel==='all'?shuffled:shuffled.slice(0,parseInt(sel));
   current=0; score=0; mistakes=[];
   showScreen('screen-quiz');
+  // モード切替
   document.getElementById('write-area').classList.toggle('hidden', mode==='choice');
   document.getElementById('choice-area').classList.toggle('hidden', mode==='write');
   loadQuestion();
@@ -251,21 +256,16 @@ function loadQuestion() {
   }
 }
 
-function showImgError() {
-  document.getElementById('quiz-img').style.display='none';
-  document.getElementById('img-error').style.display='block';
-}
-
 function buildChoices(q) {
-  const others=shuffle(ALL_ANSWERS.filter(a=>a!==q.answer)).slice(0,3);
-  const opts=shuffle([q.answer,...others]);
-  const div=document.getElementById('choices');
+  const others = shuffle(ALL_ANSWERS.filter(a=>a!==q.answer)).slice(0,3);
+  const opts = shuffle([q.answer, ...others]);
+  const div = document.getElementById('choices');
   div.innerHTML='';
   opts.forEach(opt=>{
     const btn=document.createElement('button');
     btn.className='choice-btn';
     btn.textContent=opt;
-    btn.onclick=()=>checkAnswerChoice(opt,q.answer,btn);
+    btn.onclick=()=>checkAnswerChoice(opt, q.answer, btn);
     div.appendChild(btn);
   });
 }
@@ -276,19 +276,22 @@ function checkAnswerWrite() {
   answered=true;
   inputEl.readOnly=true;
   const q=questions[current];
-  showFeedback(input===q.answer, q.answer);
+  const correct=input===q.answer;
+  showFeedback(correct, q.answer);
 }
 
 function checkAnswerChoice(selected, correct, btn) {
   if(answered)return;
   answered=true;
+  const isCorrect=selected===correct;
+  // 選択肢のスタイル更新
   document.querySelectorAll('.choice-btn').forEach(b=>{
     b.disabled=true;
     if(b.textContent===correct) b.classList.add('reveal-choice');
   });
-  if(selected!==correct) btn.classList.add('wrong-choice');
+  if(!isCorrect) btn.classList.add('wrong-choice');
   else btn.classList.add('correct-choice');
-  showFeedback(selected===correct, correct);
+  showFeedback(isCorrect, correct);
 }
 
 function showFeedback(correct, answer) {
@@ -307,6 +310,11 @@ function showFeedback(correct, answer) {
   btnNext.textContent=current+1>=questions.length?'結果を見る':'次の問題へ →';
   btnNext.classList.remove('hidden');
   if(mode==='write') inputEl.focus();
+}
+
+function showImgError() {
+  document.getElementById('quiz-img').style.display='none';
+  document.getElementById('img-error').style.display='block';
 }
 
 function nextQuestion() {

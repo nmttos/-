@@ -29,17 +29,10 @@
   .score-bar { font-size: 0.85rem; color: #888; margin-bottom: 24px; }
   .progress { font-size: 0.9rem; color: #7a5c30; margin-bottom: 16px; }
   .image-wrap {
-    background: #f5efe0;
-    border: 1px solid #d4b896;
-    border-radius: 6px;
-    padding: 16px;
-    margin-bottom: 20px;
-    min-height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 8px;
+    background: #f5efe0; border: 1px solid #d4b896; border-radius: 6px;
+    padding: 16px; margin-bottom: 20px; min-height: 160px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
   }
   .image-wrap img { max-width: 100%; max-height: 200px; object-fit: contain; }
   .img-error { color: #8b6c42; font-size: 0.85rem; display: none; }
@@ -59,8 +52,8 @@
   }
   .choice-btn:hover { background: #f0e0c0; }
   .choice-btn.correct-choice { background: #e8f5e9; border-color: #2e7d32; color: #2e7d32; }
-  .choice-btn.wrong-choice  { background: #fdecea; border-color: #c62828; color: #c62828; }
-  .choice-btn.reveal-choice { background: #e8f5e9; border-color: #2e7d32; color: #2e7d32; }
+  .choice-btn.wrong-choice   { background: #fdecea; border-color: #c62828; color: #c62828; }
+  .choice-btn.reveal-choice  { background: #e8f5e9; border-color: #2e7d32; color: #2e7d32; }
   button {
     padding: 10px 20px; font-size: 1rem; font-family: inherit;
     border: none; border-radius: 6px; cursor: pointer; transition: background 0.2s;
@@ -102,7 +95,6 @@
 </head>
 <body>
 <div class="container">
-
   <div id="screen-start">
     <div class="title-big">異体字クイズ</div>
     <p>古文書などで使われた<br>異体字を読む練習をしましょう。</p>
@@ -160,7 +152,6 @@
     <button id="btn-review" class="btn-next" style="width:100%;margin-top:8px;" onclick="startReview()">間違えた問題を復習する</button>
     <button class="btn-outline" onclick="showScreen('screen-start')">出題数を変える</button>
   </div>
-
 </div>
 <script>
 const BASE_URL = "https://raw.githubusercontent.com/nmttos/-/main/%E7%95%B0%E4%BD%93%E5%AD%97%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/";
@@ -184,7 +175,6 @@ const ALL_QUESTIONS = FILES.map(f => ({
   answer: getAnswer(f)
 }));
 
-// 全ユニーク答えリスト（4択用）
 const ALL_ANSWERS = [...new Set(ALL_QUESTIONS.map(q=>q.answer))];
 
 let questions=[], current=0, score=0, answered=false, mistakes=[], mode='write';
@@ -195,9 +185,9 @@ function selectMode(m) {
   document.getElementById('mode-choice').classList.toggle('selected', m==='choice');
 }
 
-const inputEl = document.getElementById('answer-input');
-const btnAnswer = document.getElementById('btn-answer');
-const btnNext = document.getElementById('btn-next');
+const inputEl  = document.getElementById('answer-input');
+const btnAnswer= document.getElementById('btn-answer');
+const btnNext  = document.getElementById('btn-next');
 
 btnAnswer.addEventListener('click', checkAnswerWrite);
 btnNext.addEventListener('click', nextQuestion);
@@ -209,10 +199,7 @@ inputEl.addEventListener('keydown', function(e) {
 
 function shuffle(arr) {
   const a=[...arr];
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
 
@@ -228,7 +215,6 @@ function startQuiz() {
   questions=sel==='all'?shuffled:shuffled.slice(0,parseInt(sel));
   current=0; score=0; mistakes=[];
   showScreen('screen-quiz');
-  // モード切替
   document.getElementById('write-area').classList.toggle('hidden', mode==='choice');
   document.getElementById('choice-area').classList.toggle('hidden', mode==='write');
   loadQuestion();
@@ -247,25 +233,25 @@ function loadQuestion() {
   document.getElementById('feedback').classList.add('hidden');
   document.getElementById('answer-reveal').classList.add('hidden');
   btnNext.classList.add('hidden');
-  if(mode==='write') {
-    inputEl.value='';
-    inputEl.readOnly=false;
-    inputEl.focus();
-  } else {
-    buildChoices(q);
-  }
+  if(mode==='write'){inputEl.value='';inputEl.readOnly=false;inputEl.focus();}
+  else buildChoices(q);
+}
+
+function showImgError() {
+  document.getElementById('quiz-img').style.display='none';
+  document.getElementById('img-error').style.display='block';
 }
 
 function buildChoices(q) {
-  const others = shuffle(ALL_ANSWERS.filter(a=>a!==q.answer)).slice(0,3);
-  const opts = shuffle([q.answer, ...others]);
-  const div = document.getElementById('choices');
+  const others=shuffle(ALL_ANSWERS.filter(a=>a!==q.answer)).slice(0,3);
+  const opts=shuffle([q.answer,...others]);
+  const div=document.getElementById('choices');
   div.innerHTML='';
   opts.forEach(opt=>{
     const btn=document.createElement('button');
     btn.className='choice-btn';
     btn.textContent=opt;
-    btn.onclick=()=>checkAnswerChoice(opt, q.answer, btn);
+    btn.onclick=()=>checkAnswerChoice(opt,q.answer,btn);
     div.appendChild(btn);
   });
 }
@@ -273,25 +259,20 @@ function buildChoices(q) {
 function checkAnswerWrite() {
   const input=inputEl.value.trim();
   if(!input)return;
-  answered=true;
-  inputEl.readOnly=true;
-  const q=questions[current];
-  const correct=input===q.answer;
-  showFeedback(correct, q.answer);
+  answered=true; inputEl.readOnly=true;
+  showFeedback(input===questions[current].answer, questions[current].answer);
 }
 
 function checkAnswerChoice(selected, correct, btn) {
   if(answered)return;
   answered=true;
-  const isCorrect=selected===correct;
-  // 選択肢のスタイル更新
   document.querySelectorAll('.choice-btn').forEach(b=>{
     b.disabled=true;
     if(b.textContent===correct) b.classList.add('reveal-choice');
   });
-  if(!isCorrect) btn.classList.add('wrong-choice');
+  if(selected!==correct) btn.classList.add('wrong-choice');
   else btn.classList.add('correct-choice');
-  showFeedback(isCorrect, correct);
+  showFeedback(selected===correct, correct);
 }
 
 function showFeedback(correct, answer) {
@@ -310,11 +291,6 @@ function showFeedback(correct, answer) {
   btnNext.textContent=current+1>=questions.length?'結果を見る':'次の問題へ →';
   btnNext.classList.remove('hidden');
   if(mode==='write') inputEl.focus();
-}
-
-function showImgError() {
-  document.getElementById('quiz-img').style.display='none';
-  document.getElementById('img-error').style.display='block';
 }
 
 function nextQuestion() {

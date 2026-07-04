@@ -164,9 +164,9 @@
 const BASE_URL = "https://raw.githubusercontent.com/nmttos/-/main/%E7%89%88%E6%9C%AC%E3%83%BB%E5%86%99%E6%9C%AC%E8%AA%B2%E9%A1%8C%E5%88%86/";
 
 const FILES = [
-  "事.png","事②.png","仮・假.png","伝・傳.png","似.png","何.png","余・餘.png",
+  "事.png","事②.png","仮假.png","伝傳.png","似.png","何.png","余餘.png",
   "作.png","侍.png","其②.png","冨.png","凡.png","出.png","分.png","卿.png",
-  "去.png","同.png","吹.png","吹②.png","外.png","宝・寶.png","家.png","宿.png",
+  "去.png","同.png","吹.png","吹②.png",  "外.png","宝寶.png","家.png","宿.png",
   "尽.png","常.png","度.png","或.png","所.png","敷.png","春.png","是.png",
   "時.png","月.png","朝.png","来.png","極.png","様.png","死.png","残.png",
   "水.png","泡.png","消.png","為.png","無.png","物.png","猶.png","生.png",
@@ -177,13 +177,21 @@ const FILES = [
 
 function getAnswers(f) {
   const base=f.replace(".png","").replace(/[①②③④⑤]/,"");
-  return base.split("・");
+  // 2文字以上の漢字が連続する場合は各1文字ずつ分割（例：仮假→["仮","假"]）
+  if(base.length===2) return [base[0], base[1]];
+  if(base.length===4) return [base.slice(0,2), base.slice(2,4)];
+  return [base];
+}
+
+function getDisplay(f) {
+  const answers=getAnswers(f);
+  return answers.length>1 ? answers.join('・') : answers[0];
 }
 
 const ALL_QUESTIONS = FILES.map(f => ({
   img: BASE_URL + encodeURIComponent(f),
   answers: getAnswers(f),
-  display: getAnswers(f).join("・")
+  display: getDisplay(f)
 }));
 
 // 4択用：displayを使う

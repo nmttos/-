@@ -198,6 +198,10 @@ inputEl.addEventListener('keydown', function(e) {
   if (!answered) checkAnswerWrite();
   else nextQuestion();
 });
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (answered && !btnNext.classList.contains('hidden')) nextQuestion();
+});
 
 function shuffle(arr) {
   const a=[...arr];

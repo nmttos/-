@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>くずし字クイズ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    background: #fdf6e3;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    background: #fff;
+    border: 2px solid #8b6c42;
+    border-radius: 8px;
+    padding: 36px 28px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+  .title-big {
+    font-size: 2rem;
+    color: #4a3520;
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    font-size: 0.95rem;
+    color: #7a5c30;
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+  .quiz-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .quiz-btn {
+    display: block;
+    width: 100%;
+    padding: 18px 20px;
+    background: #fdfaf4;
+    border: 2px solid #c8a87a;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .quiz-btn:hover {
+    background: #f5ead0;
+    border-color: #8b6c42;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139,108,66,0.15);
+  }
+  .quiz-btn .num {
+    font-size: 0.8rem;
+    color: #a07840;
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 0.1em;
+  }
+  .quiz-btn .name {
+    font-size: 1.15rem;
+    color: #4a3520;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .quiz-btn .desc {
+    font-size: 0.85rem;
+    color: #7a5c30;
+    display: block;
+  }
+  .footer {
+    margin-top: 28px;
+    font-size: 0.8rem;
+    color: #b09070;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title-big">くずし字クイズ</div>
+  <p class="subtitle">古文書のくずし字・異体字を<br>読む練習をしましょう。</p>
+
+  <div class="quiz-list">
+    <a class="quiz-btn" href="index.html">
+      <span class="num">QUIZ ①</span>
+      <span class="name">異体字クイズ</span>
+      <span class="desc">古文書で使われた異体字　全68問</span>
+    </a>
+    <a class="quiz-btn" href="index2.html">
+      <span class="num">QUIZ ②</span>
+      <span class="name">ひらがな字母クイズ</span>
+      <span class="desc">ひらがなの字母になった漢字　全63問</span>
+    </a>
+    <a class="quiz-btn" href="index3.html">
+      <span class="num">QUIZ ③</span>
+      <span class="name">方丈記・漢字クイズ</span>
+      <span class="desc">方丈記に使われたくずし字　全31問</span>
+    </a>
+    <a class="quiz-btn" href="index4.html">
+      <span class="num">QUIZ ④</span>
+      <span class="name">版本・写本クイズ</span>
+      <span class="desc">版本・写本に使われたくずし字　全69問</span>
+    </a>
+  </div>
+
+  <p class="footer">各クイズは記述式・4択から選べます</p>
+</div>
+</body>
+</html>

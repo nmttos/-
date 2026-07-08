@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>くずし字クイズ③</title>
+<title>異体字クイズ</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -29,17 +29,10 @@
   .score-bar { font-size: 0.85rem; color: #888; margin-bottom: 24px; }
   .progress { font-size: 0.9rem; color: #7a5c30; margin-bottom: 16px; }
   .image-wrap {
-    background: #f5efe0;
-    border: 1px solid #d4b896;
-    border-radius: 6px;
-    padding: 16px;
-    margin-bottom: 20px;
-    min-height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 8px;
+    background: #f5efe0; border: 1px solid #d4b896; border-radius: 6px;
+    padding: 16px; margin-bottom: 20px; min-height: 160px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
   }
   .image-wrap img { max-width: 100%; max-height: 200px; object-fit: contain; }
   .img-error { color: #8b6c42; font-size: 0.85rem; display: none; }
@@ -59,8 +52,8 @@
   }
   .choice-btn:hover { background: #f0e0c0; }
   .choice-btn.correct-choice { background: #e8f5e9; border-color: #2e7d32; color: #2e7d32; }
-  .choice-btn.wrong-choice  { background: #fdecea; border-color: #c62828; color: #c62828; }
-  .choice-btn.reveal-choice { background: #e8f5e9; border-color: #2e7d32; color: #2e7d32; }
+  .choice-btn.wrong-choice   { background: #fdecea; border-color: #c62828; color: #c62828; }
+  .choice-btn.reveal-choice  { background: #e8f5e9; border-color: #2e7d32; color: #2e7d32; }
   button {
     padding: 10px 20px; font-size: 1rem; font-family: inherit;
     border: none; border-radius: 6px; cursor: pointer; transition: background 0.2s;
@@ -103,15 +96,15 @@
 <body>
 <div class="container">
   <div id="screen-start">
-    <div class="title-big">くずし字クイズ④</div>
-    <p>版本・写本に使われた<br>くずし字を読む練習をしましょう。</p>
+    <div class="title-big">異体字クイズ</div>
+    <p>古文書などで使われた<br>異体字を読む練習をしましょう。</p>
     <div class="count-select">
       <label>出題数を選んでください</label>
       <select id="q-count">
         <option value="5">5問</option>
         <option value="10" selected>10問</option>
         <option value="20">20問</option>
-        <option value="all">全問（31問）</option>
+        <option value="all">全問（68問）</option>
       </select>
     </div>
     <div class="count-select">
@@ -126,14 +119,14 @@
   </div>
 
   <div id="screen-quiz" class="hidden">
-    <h1>くずし字クイズ④</h1>
+    <h1>異体字クイズ</h1>
     <div class="score-bar">正解数: <span id="score">0</span> / <span id="total-done">0</span></div>
     <div class="progress" id="progress"></div>
     <div class="image-wrap">
-      <img id="quiz-img" src="" alt="くずし字画像" onerror="showImgError()">
+      <img id="quiz-img" src="" alt="異体字画像" onerror="showImgError()">
       <div class="img-error" id="img-error">画像を読み込めませんでした</div>
     </div>
-    <div class="question-text">このくずし字は何という漢字でしょう？</div>
+    <div class="question-text">この異体字は何という漢字でしょう？</div>
     <div id="write-area">
       <div class="input-row">
         <input type="text" id="answer-input" maxlength="3" placeholder="漢字1文字">
@@ -163,13 +156,18 @@
   </div>
 </div>
 <script>
-const BASE_URL = "https://nmttos.github.io/-/%E5%86%99%E6%9C%AC%E7%89%88%E6%9C%AC%E8%AA%B2%E9%A1%8C%E5%88%86/";
+const BASE_URL = "https://nmttos.github.io/-/%E7%95%B0%E4%BD%93%E5%AD%97%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/";
 
 const FILES = [
-  "也.png","事.png","云言.png","侍.png","候.png","冬.png","卿.png","名.png",
-  "哥歌.png","夏.png","夜.png","宮.png","家.png","将.png","御.png","御①.png",
-  "心.png","思.png","思③.png","所.png","明.png","殿.png","物.png","物③.png",
-  "納.png","給.png","給②.png","色.png","身.png","長.png","雲.png"
+  "也.png","事.png","事①.png","互①.png","互②.png","今.png","光.png","凡.png",
+  "出.png","出①.png","出②.png","出③.png","印.png","取.png","品.png","喜.png",
+  "四.png","因.png","声.png","夏.png","州.png","巻.png","帰①.png","帰②.png",
+  "度.png","従.png","承.png","時①.png","書.png","森.png","歟.png","永.png",
+  "海.png","災.png","炎.png","無.png","爾.png","畢.png","畢②.png","異.png",
+  "秋.png","等.png","算.png","紙.png","給.png","美.png","義.png","聞.png",
+  "臣.png","興①.png","興②.png","色①.png","色②.png","観.png","計.png","貌.png",
+  "逃.png","還.png","部.png","難.png","霊①.png","霊②.png","霊③.png","頭①.png",
+  "頭②.png","顛.png","鶯.png","鶴.png"
 ];
 
 function getAnswer(f) { return f.replace(".png","").replace(/[①②③④⑤]/,""); }
@@ -189,9 +187,9 @@ function selectMode(m) {
   document.getElementById('mode-choice').classList.toggle('selected', m==='choice');
 }
 
-const inputEl = document.getElementById('answer-input');
-const btnAnswer = document.getElementById('btn-answer');
-const btnNext = document.getElementById('btn-next');
+const inputEl  = document.getElementById('answer-input');
+const btnAnswer= document.getElementById('btn-answer');
+const btnNext  = document.getElementById('btn-next');
 
 btnAnswer.addEventListener('click', checkAnswerWrite);
 btnNext.addEventListener('click', nextQuestion);
@@ -203,10 +201,7 @@ inputEl.addEventListener('keydown', function(e) {
 
 function shuffle(arr) {
   const a=[...arr];
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
 
@@ -240,13 +235,8 @@ function loadQuestion() {
   document.getElementById('feedback').classList.add('hidden');
   document.getElementById('answer-reveal').classList.add('hidden');
   btnNext.classList.add('hidden');
-  if(mode==='write') {
-    inputEl.value='';
-    inputEl.readOnly=false;
-    inputEl.focus();
-  } else {
-    buildChoices(q);
-  }
+  if(mode==='write'){inputEl.value='';inputEl.readOnly=false;inputEl.focus();}
+  else buildChoices(q);
 }
 
 function showImgError() {
@@ -271,10 +261,8 @@ function buildChoices(q) {
 function checkAnswerWrite() {
   const input=inputEl.value.trim();
   if(!input)return;
-  answered=true;
-  inputEl.readOnly=true;
-  const q=questions[current];
-  showFeedback(input===q.answer, q.answer);
+  answered=true; inputEl.readOnly=true;
+  showFeedback(input===questions[current].answer, questions[current].answer);
 }
 
 function checkAnswerChoice(selected, correct, btn) {
